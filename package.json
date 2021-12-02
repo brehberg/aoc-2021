@@ -1,0 +1,22 @@
+{
+  "name": "aoc-2021",
+  "version": "1.0.0",
+  "description": "Advent of Code 2021",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --passWithNoTests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brehberg/aoc-2021.git"
+  },
+  "author": "Brett Rehberg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brehberg/aoc-2021/issues"
+  },
+  "homepage": "https://github.com/brehberg/aoc-2021#readme",
+  "devDependencies": {
+    "jest": "^27.4.3"
+  }
+}
