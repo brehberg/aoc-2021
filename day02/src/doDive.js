@@ -3,14 +3,12 @@ const { processCommands } = require("./processCommands.js");
 
 async function doPart1(fileName) {
   const commands = await readCommands(fileName);
-  const answer = processCommands(commands);
-  return answer;
+  return processCommands(commands);
 }
 exports.doDivePart1 = doPart1;
 
 async function doPart2(fileName) {
   const commands = await readCommands(fileName);
-  const answer = processCommands(commands, "advanced");
-  return answer;
+  return processCommands(commands, "advanced");
 }
 exports.doDivePart2 = doPart2;
