@@ -22,7 +22,7 @@ function processLifeSupportRating(bitArrays) {
   return parseInt(oxygen.join(""), 2) * parseInt(co2.join(""), 2);
 
   function determineRating(workArea, tieBreak = 1, position = 0) {
-    let length = workArea.length;
+    const length = workArea.length;
     if (length === 1) return workArea[0];
 
     let bitCount = 0;
