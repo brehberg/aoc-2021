@@ -1,16 +1,20 @@
-const { doSonarSweepPart1, doSonarSweepPart2 } = require("./src/doSonarSweep.js");
-// https://adventofcode.com/2021/day/1
+const { doSonarSweepPart1 } = require("./src/doSonarSweep.js");
+const { doSonarSweepPart2 } = require("./src/doSonarSweep.js");
 
-doSonarSweepPart1("./data/example.txt").then((result) =>
+console.log("--- Day 1: Sonar Sweep ---"); // https://adventofcode.com/2021/day/1
+const testFile = `${__dirname}/data/example.txt`;
+const realFile = `${__dirname}/data/input.txt`;
+
+doSonarSweepPart1(testFile).then((result) =>
   console.log(`Part One: Example: ${result}`)
 ); // 7
-doSonarSweepPart1("./data/input.txt").then((result) =>
+doSonarSweepPart1(realFile).then((result) =>
   console.log(`Part One: Answer: ${result}`)
 ); // 1557
 
-doSonarSweepPart2("./data/example.txt").then((result) =>
+doSonarSweepPart2(testFile).then((result) =>
   console.log(`Part Two: Example: ${result}`)
 ); // 5
-doSonarSweepPart2("./data/input.txt").then((result) =>
+doSonarSweepPart2(realFile).then((result) =>
   console.log(`Part Two: Answer: ${result}`)
 ); // 1608
