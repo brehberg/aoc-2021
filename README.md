@@ -13,7 +13,7 @@
     |-- doSomeTask.js
     |-- doSomeTask.test.js
     |-- processThings.js
-    |-- readThings.js  
+    |-- readThings.js
   |-- main.js
 ```
 
@@ -25,18 +25,17 @@
 ```text
 > node day01/main
 --- Day 1: Sonar Sweep ---
-Part One: Example: 7
-Part One: Answer: 1557
-Part Two: Example: 5
-Part Two: Answer: 1608
+Part One Example: 7
+Part One Answer: 1557
+Part Two Example: 5
+Part Two Answer: 1608
 ```
 
 ```text
 > npm test
-
  PASS  day01/src/doSonarSweep.test.js
  PASS  day02/src/doDive.test.js
- 
+
 Test Suites: 2 passed, 2 total
 Tests:       8 passed, 8 total
 Snapshots:   0 total
@@ -48,4 +47,4 @@ Ran all test suites.
 
 - Day 1: Sonar Sweep
 - Day 2: Dive!
-- Day 3:
+- Day 3: Binary Diagnostic
