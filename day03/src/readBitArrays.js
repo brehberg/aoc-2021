@@ -8,7 +8,7 @@ async function readBitArrays(fileName) {
   });
   const someBitArrays = [];
   for await (const line of file) {
-    someBitArrays.push(line.split('').map(c => parseInt(c)));
+    someBitArrays.push(line.split("").map((c) => parseInt(c)));
   }
   return someBitArrays;
 }

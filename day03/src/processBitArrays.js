@@ -19,28 +19,24 @@ exports.processPowerConsumption = processPowerConsumption;
 function processLifeSupportRating(bitArrays) {
   const oxygen = determineRating(bitArrays);
   const co2 = determineRating(bitArrays, 0);
-
   return parseInt(oxygen.join(""), 2) * parseInt(co2.join(""), 2);
 
-  function determineRating(workArea, tieBreak = 1) {
-    let [length, position] = [workArea.length, 0];
+  function determineRating(workArea, tieBreak = 1, position = 0) {
+    let length = workArea.length;
+    if (length === 1) return workArea[0];
 
-    while (length > 1) {
-      let bitCount = 0;
-      workArea.forEach((bitArray) => {
-        if (bitArray[position] === 1) bitCount++;
-      });
-      const bitCriteria = bitCount >= length / 2 ? tieBreak : 1 - tieBreak;
+    let bitCount = 0;
+    workArea.forEach((bitArray) => {
+      if (bitArray[position] === 1) bitCount++;
+    });
+    const bitCriteria = bitCount >= length / 2 ? tieBreak : 1 - tieBreak;
 
-      const keepers = [];
-      workArea.forEach((bitArray) => {
-        if (bitArray[position] === bitCriteria) keepers.push(bitArray);
-      });
-      workArea = keepers;
-      length = workArea.length;
-      position++;
-    }
-    return workArea[0];
+    const keepers = [];
+    workArea.forEach((bitArray) => {
+      if (bitArray[position] === bitCriteria) keepers.push(bitArray);
+    });
+
+    return determineRating(keepers, tieBreak, position + 1);
   }
 }
 exports.processLifeSupportRating = processLifeSupportRating;
