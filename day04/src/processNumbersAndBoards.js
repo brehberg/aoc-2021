@@ -18,44 +18,36 @@ function processNumbersAndBoards(input, winner = "first") {
     markedValues.push(Array(25).fill(false));
   });
 
-  const BreakException = {};
-  let finalScore = 0;
-  try {
-    input.numbers.forEach((number) => {
-      // mark all bingo boards as each number is drawn
-      flatBoards.forEach((flatBoard, boardIndex) => {
-        const position = flatBoard.indexOf(number);
-        if (position != -1) markedValues[boardIndex][position] = true;
-      });
-
-      // check if any winning row is marked on any board
-      winningRows.forEach((winRow) => {
-        markedValues.forEach((markedBoard, boardIndex) => {
-          const checkRow = [];
-          winRow.forEach((position) => {
-            checkRow.push(markedBoard[position]);
-          });
-          if (checkRow.filter(Boolean).length === 5) {
-            // calculate the result when looking for first win or last board
-            // otherwise remove the current winning board from consideration
-            if (winner === "first" || flatBoards.length === 1) {
-              let sum = 0;
-              markedBoard.forEach((marked, index) => {
-                if (!marked) sum += flatBoards[boardIndex][index];
-              });
-              finalScore = number * sum;
-              throw BreakException;
-            } else {
-              flatBoards.splice(boardIndex, 1);
-              markedValues.splice(boardIndex, 1);
-            }
-          }
-        });
-      });
+  for (const number of input.numbers) {
+    // mark all bingo boards as each number is drawn
+    flatBoards.forEach((flatBoard, boardIndex) => {
+      const position = flatBoard.indexOf(number);
+      if (position !== -1) markedValues[boardIndex][position] = true;
     });
-  } catch (e) {
-    if (e !== BreakException) throw e;
-    return finalScore;
+
+    // check each board to see if any winning row has been marked
+    for (const [boardIndex, markedBoard] of markedValues.entries()) {
+      for (const winRow of winningRows) {
+        // determine total marked values for this row (5 is a winner)
+        const checkWinningRow = markedBoard.filter(
+          (flag, position) => winRow.includes(position) && flag
+        );
+        if (checkWinningRow.length !== 5) continue;
+
+        // calculate the result when looking for first win or last board
+        // otherwise remove the current winning board from consideration
+        if (winner === "first" || flatBoards.length === 1) {
+          const sum_of_unmarked = flatBoards[boardIndex]
+            .filter((value, index) => !markedBoard[index])
+            .reduce((partial, value) => partial + value);
+          return number * sum_of_unmarked;
+        } else {
+          flatBoards.splice(boardIndex, 1);
+          markedValues.splice(boardIndex, 1);
+        }
+      }
+    }
   }
+  return -1; // no winner was found
 }
 exports.processNumbersAndBoards = processNumbersAndBoards;
