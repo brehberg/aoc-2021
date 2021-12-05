@@ -6,20 +6,22 @@ async function readNumbersAndBoards(fileName) {
     input: createReadStream(fileName),
     crlfDelay: Infinity,
   });
-  const [numbers, boards] = [[], []];
+  const bingoData = { numbers: [], boards: [] };
   for await (const line of file) {
-    const trimmed = line.trim();
-    if (numbers.length === 0) {
-      // first lines of input file lists the numbers to be drawn
-      numbers.push(...trimmed.split(",").map(Number));
-    } else if (trimmed === "") {
+    const trimmedInput = line.trim();
+    if (!bingoData.numbers.length) {
+      // first lines of input file has the bingo numbers to be drawn
+      bingoData.numbers.push(...trimmedInput.split(",").map(Number));
+    } else if (!trimmedInput) {
       // blank lines are used to seperate each of the bingo boards
-      boards.push([]);
+      bingoData.boards.push([]);
     } else {
-      // all other lines represent a row of cuurent board values
-      boards[boards.length - 1].push(trimmed.split(/\s+/).map(Number));
+      // other lines of input represent rows of bingo board values
+      bingoData.boards[bingoData.boards.length - 1].push(
+        trimmedInput.split(/\s+/).map(Number)
+      );
     }
   }
-  return { numbers: numbers, boards: boards };
+  return bingoData;
 }
 exports.readNumbersAndBoards = readNumbersAndBoards;

@@ -1,5 +1,5 @@
 function processNumbersAndBoards(input, winner = "first") {
-  const winningRows = [
+  const possibleLines = [
     [0, 1, 2, 3, 4],
     [5, 6, 7, 8, 9],
     [10, 11, 12, 13, 14],
@@ -12,38 +12,39 @@ function processNumbersAndBoards(input, winner = "first") {
     [4, 9, 14, 19, 24],
   ];
 
-  const [flatBoards, markedValues] = [[], []];
+  const bingoBoards = [];
   input.boards.forEach((rawBoard) => {
-    flatBoards.push(rawBoard.flat());
-    markedValues.push(Array(25).fill(false));
+    bingoBoards.push({
+      flatValues: rawBoard.flat(),
+      markedValues: Array(25).fill(false),
+    });
   });
 
-  for (const number of input.numbers) {
+  for (const drawnNumber of input.numbers) {
     // mark all bingo boards as each number is drawn
-    flatBoards.forEach((flatBoard, boardIndex) => {
-      const position = flatBoard.indexOf(number);
-      if (position !== -1) markedValues[boardIndex][position] = true;
+    bingoBoards.forEach((bingoBoard) => {
+      const position = bingoBoard.flatValues.indexOf(drawnNumber);
+      if (position !== -1) bingoBoard.markedValues[position] = true;
     });
 
-    // check each board to see if any winning row has been marked
-    for (const [boardIndex, markedBoard] of markedValues.entries()) {
-      for (const winRow of winningRows) {
-        // determine total marked values for this row (5 is a winner)
-        const checkWinningRow = markedBoard.filter(
-          (flag, position) => winRow.includes(position) && flag
+    // check each board to see if any winning line has been marked
+    for (const [boardIndex, currentBoard] of bingoBoards.entries()) {
+      for (const thisLine of possibleLines) {
+        // validate total marked values for this line (5 is a winner)
+        const checkWinningLine = currentBoard.markedValues.filter(
+          (flag, position) => flag && thisLine.includes(position)
         );
-        if (checkWinningRow.length !== 5) continue;
+        if (checkWinningLine.length !== 5) continue;
 
-        // calculate the result when looking for first win or last board
+        // calculate the result when finding the first win or last board
         // otherwise remove the current winning board from consideration
-        if (winner === "first" || flatBoards.length === 1) {
-          const sum_of_unmarked = flatBoards[boardIndex]
-            .filter((value, index) => !markedBoard[index])
-            .reduce((partial, value) => partial + value);
-          return number * sum_of_unmarked;
+        if (winner === "first" || bingoBoards.length === 1) {
+          const sumOfunmarkedValues = currentBoard.flatValues
+            .filter((value, index) => !currentBoard.markedValues[index])
+            .reduce((partialSum, value) => partialSum + value, 0);
+          return drawnNumber * sumOfunmarkedValues;
         } else {
-          flatBoards.splice(boardIndex, 1);
-          markedValues.splice(boardIndex, 1);
+          bingoBoards.splice(boardIndex, 1);
         }
       }
     }
