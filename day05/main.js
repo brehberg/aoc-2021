@@ -1,7 +1,8 @@
 const { doVentMappingPart1 } = require("./src/doVentMapping.js");
 const { doVentMappingPart2 } = require("./src/doVentMapping.js");
 
-console.log("--- Day 5: Hydrothermal Venture ---"); // https://adventofcode.com/2021/day/5
+// https://adventofcode.com/2021/day/5
+console.log("--- Day 5: Hydrothermal Venture ---"); 
 const testFile = `${__dirname}/data/example.txt`;
 const realFile = `${__dirname}/data/input.txt`;
 

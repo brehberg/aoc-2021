@@ -60,7 +60,7 @@ function initializeVentMap(x, y) {
     },
 
     hydrothermalDangerLevel: function (min) {
-      return this.data.flat().filter((value) => value >= min).length;
+      return this.data.flat().filter((val) => val >= min).length;
     },
   };
 }

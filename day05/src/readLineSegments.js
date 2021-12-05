@@ -9,10 +9,11 @@ async function readLineSegments(fileName) {
   const lineSegments = [];
   for await (const line of file) {
     const numbers = line.match(/\d+/g).map(Number);
-    lineSegments.push({
-      start: { x: numbers[0], y: numbers[1] },
-      end: { x: numbers[2], y: numbers[3] },
-    });
+    numbers.length === 4 &&
+      lineSegments.push({
+        start: { x: numbers[0], y: numbers[1] },
+        end: { x: numbers[2], y: numbers[3] },
+      });
   }
   return lineSegments;
 }
