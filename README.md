@@ -2,6 +2,14 @@
 
 ## [Advent of Code 2021](https://adventofcode.com/2021)
 
+### Completed Challenges
+
+- Day 1: Sonar Sweep
+- Day 2: Dive!
+- Day 3: Binary Diagnostic
+- Day 4: Giant Squid
+- Day 5: Hydrothermal Venture
+
 ### Repository Structure
 
 ```text
@@ -42,10 +50,3 @@ Snapshots:   0 total
 Time:        0.244 s, estimated 1 s
 Ran all test suites.
 ```
-
-### Completed Challenges
-
-- Day 1: Sonar Sweep
-- Day 2: Dive!
-- Day 3: Binary Diagnostic
-- Day 4: Giant Squid
