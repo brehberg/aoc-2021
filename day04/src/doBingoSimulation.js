@@ -1,14 +1,14 @@
-const { readNumbersAndBoards } = require("./readNumbersAndBoards.js");
-const { processNumbersAndBoards } = require("./processNumbersAndBoards.js");
+const { readBingoData } = require("./readBingoData.js");
+const { processBingoData } = require("./processBingoData.js");
 
 async function doPart1(fileName) {
-  const data = await readNumbersAndBoards(fileName);
-  return processNumbersAndBoards(data);
+  const data = await readBingoData(fileName);
+  return processBingoData(data);
 }
 exports.doBingoSimulationPart1 = doPart1;
 
 async function doPart2(fileName) {
-  const data = await readNumbersAndBoards(fileName);
-  return processNumbersAndBoards(data, "last");
+  const data = await readBingoData(fileName);
+  return processBingoData(data, "last");
 }
 exports.doBingoSimulationPart2 = doPart2;

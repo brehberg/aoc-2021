@@ -1,7 +1,7 @@
 const { createReadStream } = require("fs");
 const { createInterface } = require("readline");
 
-async function readNumbersAndBoards(fileName) {
+async function readBingoData(fileName) {
   const file = createInterface({
     input: createReadStream(fileName),
     crlfDelay: Infinity,
@@ -24,4 +24,4 @@ async function readNumbersAndBoards(fileName) {
   }
   return bingoData;
 }
-exports.readNumbersAndBoards = readNumbersAndBoards;
+exports.readBingoData = readBingoData;

@@ -1,4 +1,4 @@
-function processNumbersAndBoards(input, winner = "first") {
+function processBingoData(input, winner = "first") {
   const possibleLines = [
     [0, 1, 2, 3, 4],
     [5, 6, 7, 8, 9],
@@ -39,10 +39,10 @@ function processNumbersAndBoards(input, winner = "first") {
         // calculate the result when finding the first win or last board
         // otherwise remove the current winning board from consideration
         if (winner === "first" || bingoBoards.length === 1) {
-          const sumOfunmarkedValues = currentBoard.flatValues
+          const sumOfUnmarkedValues = currentBoard.flatValues
             .filter((value, index) => !currentBoard.markedValues[index])
             .reduce((partialSum, value) => partialSum + value, 0);
-          return drawnNumber * sumOfunmarkedValues;
+          return drawnNumber * sumOfUnmarkedValues;
         } else {
           bingoBoards.splice(boardIndex, 1);
         }
@@ -51,4 +51,4 @@ function processNumbersAndBoards(input, winner = "first") {
   }
   return -1; // no winner was found
 }
-exports.processNumbersAndBoards = processNumbersAndBoards;
+exports.processBingoData = processBingoData;
