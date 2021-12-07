@@ -1,14 +1,14 @@
-function processCrabPositions(someCrabPositions, burnRate = "basic") {
-  fuelCosts = Array(Math.max(...someCrabPositions) + 1).fill(0);
-  for (let target = 0; target < fuelCosts.length; target++) {
-    for (const current of someCrabPositions) {
-      fuelCosts[target] +=
-        burnRate === "basic"
-          ? basicFuelCost(target, current)
-          : complexFuelCost(current, target);
-    }
+function processCrabPositions(inputPositions, burnRate = "basic") {
+  const maxPosition = Math.max(...inputPositions);
+  const fuelCost = burnRate === "basic" ? basicFuelCost : complexFuelCost;
+  let minimumFuel = Number.POSITIVE_INFINITY;
+  // check each position to find cheapest possible alignment cost
+  for (let target = 0; target <= maxPosition; target++) {
+    const totalFuel = inputPositions.reduce(
+      (sum, current) => sum + fuelCost(target, current), 0);
+    if (minimumFuel > totalFuel) minimumFuel = totalFuel;
   }
-  return Math.min(...fuelCosts);
+  return minimumFuel;
 }
 exports.processCrabPositions = processCrabPositions;
 
@@ -16,12 +16,7 @@ function basicFuelCost(target, current) {
   return Math.abs(current - target);
 }
 
-function complexFuelCost(current, target) {
-  const [start, end] =
-    current <= target ? [current, target] : [target, current];
-  let totalCost = 0;
-  for (let offset = start; offset < end; offset++) {
-    totalCost += 1 + offset - start;
-  }
-  return totalCost;
+function complexFuelCost(target, current) {
+  const distance = Math.abs(current - target);
+  return (distance * (distance + 1)) / 2;
 }
