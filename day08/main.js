@@ -5,6 +5,7 @@ const { doDecodeDigitsPart2 } = require("./src/doDecodeDigits.js");
 console.log("--- Day 8: Seven Segment Search ---");
 const testFile = `${__dirname}/data/example.txt`;
 const realFile = `${__dirname}/data/input.txt`;
+const otherFile = `${__dirname}/data/basic.txt`;
 
 doDecodeDigitsPart1(testFile).then((result) =>
   console.log(`Part One Example: ${result}`)
@@ -13,6 +14,9 @@ doDecodeDigitsPart1(realFile).then((result) =>
   console.log(`Part One Answer: ${result}`)
 ); // 237
 
+doDecodeDigitsPart2(otherFile).then((result) =>
+  console.log(`Part Two Basic: ${result}`)
+); // 26
 doDecodeDigitsPart2(testFile).then((result) =>
   console.log(`Part Two Example: ${result}`)
 ); // 61229

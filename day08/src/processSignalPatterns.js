@@ -55,6 +55,9 @@ function determineDigitPatterns(patterns) {
   digits[5] = ofLength.five.filter((p) => !p.includes(segments[2]))[0];
   ofLength.five.splice(ofLength.five.indexOf(digits[5]), 1);
 
+  // segment 4 is part of digit 6 that is not part of 5
+  segments[4] = digits[6].filter((c) => !digits[5].includes(c))[0];
+
   // segment 5 is part of digit 1 that is not the segment 2
   segments[5] = digits[1].filter((c) => c !== segments[2])[0];
 
@@ -76,5 +79,8 @@ function determineDigitPatterns(patterns) {
     (c) => ![segments[2], segments[3], segments[5]].includes(c)
   )[0];
 
+  // segment 6 is part of digit 8 that is has not been found
+  segments[6] = digits[8].filter((c) => !segments.includes(c))[0];
+  
   return digits.map((value) => value.sort().join(""));
 }
