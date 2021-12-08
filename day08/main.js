@@ -16,7 +16,7 @@ doDecodeDigitsPart1(realFile).then((result) =>
 
 doDecodeDigitsPart2(otherFile).then((result) =>
   console.log(`Part Two Basic: ${result}`)
-); // 26
+); // 5353
 doDecodeDigitsPart2(testFile).then((result) =>
   console.log(`Part Two Example: ${result}`)
 ); // 61229

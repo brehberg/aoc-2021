@@ -8,11 +8,13 @@ async function readSignalPatterns(fileName) {
   });
   const signalData = [];
   for await (const line of file) {
-    const splitLine = line.split("|");
-    if (splitLine.length === 2)
+    const splitLine = line.split("|").map((s) => s.trim().split(/\s+/));
+    splitLine.length === 2 &&
+      splitLine[0].length === 10 &&
+      splitLine[1].length === 4 &&
       signalData.push({
-        uniquePatterns: splitLine[0].trim().split(/\s+/),
-        outputValues: splitLine[1].trim().split(/\s+/),
+        uniquePatterns: splitLine[0],
+        outputValues: splitLine[1],
       });
   }
   return signalData;

@@ -3,15 +3,15 @@ function countEasyOutputValues(input) {
 }
 exports.countEasyOutputValues = countEasyOutputValues;
 
-function processSignalPatterns(inputData) {
-  return inputData.reduce((sum, entry) => sum + determineNumber(entry), 0);
-}
-exports.processSignalPatterns = processSignalPatterns;
-
 function countDigits(values) {
   // the easy values 1, 4, 7, and 8 each have unique segment lengths
   return values.filter((val) => [2, 4, 3, 7].includes(val.length)).length;
 }
+
+function processSignalPatterns(inputData) {
+  return inputData.reduce((sum, entry) => sum + determineNumber(entry), 0);
+}
+exports.processSignalPatterns = processSignalPatterns;
 
 function determineNumber(signal) {
   const number = [];
@@ -23,64 +23,54 @@ function determineNumber(signal) {
   return parseInt(number.join(""));
 }
 
-function determineDigitPatterns(patterns) {
-  const [segments, digits] = [Array(7), Array(10)];
-  const ofLength = { five: [], six: [] };
+function determineDigitPatterns(uniqueSignalPatterns) {
+  const digits = Array(10);
+  const ofSize = { five: [], six: [] };
 
-  // start by getting the unique digits and split patterns into chars
-  for (const pattern of patterns) {
-    if (pattern.length === 2) digits[1] = pattern.split("");
-    else if (pattern.length === 3) digits[7] = pattern.split("");
-    else if (pattern.length === 4) digits[4] = pattern.split("");
-    else if (pattern.length === 7) digits[8] = pattern.split("");
-    // length 5 could be patterns for value 2, 3, or 5
-    else if (pattern.length === 5) ofLength.five.push(pattern.split(""));
-    // length 6 could be patterns for value0, 6, or 9
-    else if (pattern.length === 6) ofLength.six.push(pattern.split(""));
+  for (const signal of uniqueSignalPatterns) {
+    // start by splitting patterns into chars and getting the easy digits
+    const [pattern, patternSize] = [signal.split(""), signal.length];
+    if (patternSize === 2) digits[1] = pattern;
+    else if (patternSize === 3) digits[7] = pattern;
+    else if (patternSize === 4) digits[4] = pattern;
+    else if (patternSize === 7) digits[8] = pattern;
+    // length 5 could be patterns for digits 2, 3, or 5
+    else if (patternSize === 5) ofSize.five.push(pattern);
+    // length 6 could be patterns for digits 6, 9 or 0
+    else if (patternSize === 6) ofSize.six.push(pattern);
   }
 
-  // segment 0 is part of digit 7 and not part of 1
-  segments[0] = digits[7].filter((c) => !digits[1].includes(c))[0];
+  // top-right segment is part of digits 1, 9, and 0 but not part of 6
+  const topRight = findUniqueSegment(digits[1], ofSize.six);
 
-  // segment 2 is part of digits 1, 0, and 9 but not part of 6
-  segments[2] = digits[1].filter(
-    (c) => ofLength.six.flat().filter((v) => v === c).length !== 3
-  )[0];
+  // top-right segment is part of digits 9 and 0 but not part of 6
+  digits[6] = ofSize.six.find((digit) => !digit.includes(topRight));
+  ofSize.six.splice(ofSize.six.indexOf(digits[6]), 1);
 
-  // segment 2 is part of digits 0 and 9 but not part of 6
-  digits[6] = ofLength.six.filter((p) => !p.includes(segments[2]))[0];
-  ofLength.six.splice(ofLength.six.indexOf(digits[6]), 1);
+  // top-right segment is part of digits 2 and 3 but not part of 5
+  digits[5] = ofSize.five.find((digit) => !digit.includes(topRight));
+  ofSize.five.splice(ofSize.five.indexOf(digits[5]), 1);
 
-  // segment 2 is part of digits 2 and 3 but not part of 5
-  digits[5] = ofLength.five.filter((p) => !p.includes(segments[2]))[0];
-  ofLength.five.splice(ofLength.five.indexOf(digits[5]), 1);
+  // bottom-right segment is part of digit 1 that is not top-right
+  const bottomRight = digits[1].find((segment) => segment !== topRight);
 
-  // segment 4 is part of digit 6 that is not part of 5
-  segments[4] = digits[6].filter((c) => !digits[5].includes(c))[0];
+  // bottom-right segment is part of digit 3 and not part of 2
+  digits[3] = ofSize.five.find((digit) => digit.includes(bottomRight));
+  digits[2] = ofSize.five.find((digit) => !digit.includes(bottomRight));
 
-  // segment 5 is part of digit 1 that is not the segment 2
-  segments[5] = digits[1].filter((c) => c !== segments[2])[0];
+  // center segment is part of digits 4 and 9 but not part of 0
+  const center = findUniqueSegment(digits[4], ofSize.six);
 
-  // segment 5 is part of digit 3 and not part of 2
-  digits[2] = ofLength.five.filter((p) => !p.includes(segments[5]))[0];
-  digits[3] = ofLength.five.filter((p) => p.includes(segments[5]))[0];
+  // center segment is part of digit 9 and not part of 0
+  digits[9] = ofSize.six.find((digit) => digit.includes(center));
+  digits[0] = ofSize.six.find((digit) => !digit.includes(center));
 
-  // segment 3 is part of digits 4 and 9 but not part of 0
-  segments[3] = digits[4].filter(
-    (c) => ofLength.six.flat().filter((v) => v === c).length !== 2
-  )[0];
-
-  // segment 3 is part of digit 9 and not part of 0
-  digits[9] = ofLength.six.filter((p) => p.includes(segments[3]))[0];
-  digits[0] = ofLength.six.filter((p) => !p.includes(segments[3]))[0];
-
-  // segment 1 is part of digit 4 that is not segment 2, 3, or 5
-  segments[1] = digits[4].filter(
-    (c) => ![segments[2], segments[3], segments[5]].includes(c)
-  )[0];
-
-  // segment 6 is part of digit 8 that is has not been found
-  segments[6] = digits[8].filter((c) => !segments.includes(c))[0];
-  
   return digits.map((value) => value.sort().join(""));
+}
+
+function findUniqueSegment(fromDigit, setOfDigits) {
+  const [set, len] = [setOfDigits.flat(), setOfDigits.length];
+  return fromDigit.find(
+    (segment) => set.filter((value) => value === segment).length !== len
+  );
 }
