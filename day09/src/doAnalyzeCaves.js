@@ -9,6 +9,6 @@ exports.doAnalyzeCavesPart1 = doPart1;
 
 async function doPart2(fileName) {
   const data = await readHeightMap(fileName);
-  return processHeightMap(data, true);
+  return processHeightMap(data, false);
 }
 exports.doAnalyzeCavesPart2 = doPart2;
