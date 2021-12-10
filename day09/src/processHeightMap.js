@@ -25,12 +25,12 @@ function initializeHeightMap(heightMapInput) {
       return {
         pointData: lowPoints,
         calculateRiskLevel: function () {
-          // the risk level of a low point is 1 plus its height
+          // the risk level of each low point is 1 plus its height
           return this.pointData.reduce((sum, p) => sum + p.height + 1, 0);
         },
       };
     },
-    calculateLargestBasins: function (points) {
+    calculateLargestBasins: function (points, numberOfBasins = 3) {
       // Part 2 main function
       points.pointData.forEach((point) => {
         point.size = findBasinSize(point);
@@ -38,7 +38,7 @@ function initializeHeightMap(heightMapInput) {
       // multiply together the sizes of the three largest basins
       return points.pointData
         .sort((a, b) => b.size - a.size)
-        .slice(0, 3)
+        .slice(0, numberOfBasins)
         .reduce((total, point) => total * point.size, 1);
     },
   };
@@ -57,12 +57,12 @@ function initializeHeightMap(heightMapInput) {
   }
 
   // Part 2 helper functions
-  function findBasinSize(startPoint) {
+  function findBasinSize(startPoint, maxHeight = 9) {
     const marked = Array(maxRow + 1)
       .fill()
       .map(() => Array(maxCol + 1).fill(false));
-    marked[startPoint.row][startPoint.col] = true;
     const pointsToCheck = [startPoint];
+    marked[startPoint.row][startPoint.col] = true;
 
     while (pointsToCheck.length) {
       const point = pointsToCheck.shift();
@@ -71,12 +71,13 @@ function initializeHeightMap(heightMapInput) {
       if (point.col !== 0) markNeighbor(point.row, point.col - 1);
       if (point.col !== maxCol) markNeighbor(point.row, point.col + 1);
     }
-    function markNeighbor(otherRow, otherCol) {
-      if (heightMap[otherRow][otherCol] < 9 && !marked[otherRow][otherCol]) {
-        marked[otherRow][otherCol] = true;
-        pointsToCheck.push({ row: otherRow, col: otherCol });
+    return marked.reduce((sum, row) => sum + row.filter(Boolean).length, 0);
+
+    function markNeighbor(onRow, onCol) {
+      if (heightMap[onRow][onCol] < maxHeight && !marked[onRow][onCol]) {
+        pointsToCheck.push({ row: onRow, col: onCol });
+        marked[onRow][onCol] = true;
       }
     }
-    return marked.reduce((sum, row) => sum + row.filter(Boolean).length, 0);
   }
 }
