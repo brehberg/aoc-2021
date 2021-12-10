@@ -10,15 +10,16 @@ function initializeHeightMap(heightMapInput) {
   const heightMap = heightMapInput;
   const maxRow = heightMap.length - 1;
   const maxCol = heightMap[0].length - 1;
+
   return {
     determineLowPoints: function () {
-      // Part 1
+      // Part 1 main function
       const lowPoints = [];
       for (let row = 0; row <= maxRow; row++) {
         for (let col = 0; col <= maxCol; col++) {
           const current = heightMap[row][col];
-          isLowPoint(current, row, col) &&
-            lowPoints.push({ height: current, size: 0, row: row, col: col });
+          if (isLowPoint(current, row, col))
+            lowPoints.push({ height: current, row: row, col: col });
         }
       }
       return {
@@ -30,7 +31,7 @@ function initializeHeightMap(heightMapInput) {
       };
     },
     calculateLargestBasins: function (points) {
-      // Part 2
+      // Part 2 main function
       points.pointData.forEach((point) => {
         point.size = findBasinSize(point);
       });
@@ -41,42 +42,41 @@ function initializeHeightMap(heightMapInput) {
         .reduce((total, point) => total * point.size, 1);
     },
   };
-  function findBasinSize(pointData) {
+
+  // Part 1 helper functions
+  function isLowPoint(currentHeight, row, col) {
+    return (
+      (row === 0 || isLower(row - 1, col)) &&
+      (row === maxRow || isLower(row + 1, col)) &&
+      (col === 0 || isLower(row, col - 1)) &&
+      (col === maxCol || isLower(row, col + 1))
+    );
+    function isLower(otherRow, otherCol) {
+      return currentHeight < heightMap[otherRow][otherCol];
+    }
+  }
+
+  // Part 2 helper functions
+  function findBasinSize(startPoint) {
     const marked = Array(maxRow + 1)
       .fill()
       .map(() => Array(maxCol + 1).fill(false));
-    marked[pointData.row][pointData.col] = true;
-    let changed = true;
+    marked[startPoint.row][startPoint.col] = true;
+    const pointsToCheck = [startPoint];
 
-    while (changed) {
-      changed = false;
-      for (let row = 0; row <= maxRow; row++) {
-        for (let col = 0; col <= maxCol; col++) {
-          const current = marked[row][col];
-          if (current && row !== 0) checkAndMarkNeighbor(row - 1, col);
-          if (current && row !== maxRow) checkAndMarkNeighbor(row + 1, col);
-          if (current && col !== 0) checkAndMarkNeighbor(row, col - 1);
-          if (current && col !== maxCol) checkAndMarkNeighbor(row, col + 1);
-        }
-      }
+    while (pointsToCheck.length) {
+      const point = pointsToCheck.shift();
+      if (point.row !== 0) markNeighbor(point.row - 1, point.col);
+      if (point.row !== maxRow) markNeighbor(point.row + 1, point.col);
+      if (point.col !== 0) markNeighbor(point.row, point.col - 1);
+      if (point.col !== maxCol) markNeighbor(point.row, point.col + 1);
     }
-    function checkAndMarkNeighbor(otherRow, otherCol) {
-      if (heightMap[otherRow][otherCol] !== 9 && !marked[otherRow][otherCol]) {
+    function markNeighbor(otherRow, otherCol) {
+      if (heightMap[otherRow][otherCol] < 9 && !marked[otherRow][otherCol]) {
         marked[otherRow][otherCol] = true;
-        changed = true;
+        pointsToCheck.push({ row: otherRow, col: otherCol });
       }
     }
     return marked.reduce((sum, row) => sum + row.filter(Boolean).length, 0);
-  }
-  function isLowPoint(current, row, col) {
-    return (
-      (row === 0 || isLower(current, row - 1, col)) &&
-      (row === maxRow || isLower(current, row + 1, col)) &&
-      (col === 0 || isLower(current, row, col - 1)) &&
-      (col === maxCol || isLower(current, row, col + 1))
-    );
-  }
-  function isLower(currentHeight, otherRow, otherCol) {
-    return currentHeight < heightMap[otherRow][otherCol];
   }
 }
