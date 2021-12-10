@@ -32,23 +32,24 @@ function initializeSymbolStack() {
       if (openSymbols.includes(symbol)) {
         stack.push(symbol);
       } else if (closeSymbols.includes(symbol)) {
-        const symbolIndex = closeSymbols.indexOf(symbol);
-        const lastSymbol = stack.pop();
-        if (lastSymbol !== openSymbols[symbolIndex]) {
-          totalSyntaxScore += symbolScores[symbolIndex];
+        const index = closeSymbols.indexOf(symbol);
+        const latestOpen = stack.pop();
+        if (latestOpen !== openSymbols[index]) {
+          totalSyntaxScore += symbolScores[index];
           corruptedLine = true;
         }
       }
       return !corruptedLine;
     },
     computeLineCompletionScore: function () {
+      // symbols must be popped (removed from end of array)
       const score = stack.reduceRight((total, symbol) => {
         return total * 5 + openSymbols.indexOf(symbol) + 1;
       }, 0);
       completionScores.push(score);
     },
     completionScore: function () {
-      const middle = parseInt(completionScores.length / 2);
+      const middle = Math.floor(completionScores.length / 2);
       return completionScores.sort((a, b) => a - b)[middle];
     },
     syntaxScore: function () {
