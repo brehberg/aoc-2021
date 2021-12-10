@@ -13,6 +13,7 @@
 - Day 7: The Treachery of Whales
 - Day 8: Seven Segment Search
 - Day 9: Smoke Basin
+- Day 10: Syntax Scoring
 
 ### Repository Structure
 
