@@ -27,10 +27,10 @@ exports.processSyntaxChunks = processSyntaxChunks;
 
 function handleSymbol(symbol, stack) {
   if (openSymbols.includes(symbol)) {
-    stack.unshift(symbol);
+    stack.push(symbol);
   } else if (closeSymbols.includes(symbol)) {
     const symbolIndex = closeSymbols.indexOf(symbol);
-    const lastSymbol = stack.shift();
+    const lastSymbol = stack.pop();
     if (lastSymbol !== openSymbols[symbolIndex]) {
       return symbolScores[symbolIndex];
     }
@@ -38,7 +38,7 @@ function handleSymbol(symbol, stack) {
 }
 
 function completeLineScore(stack) {
-  return stack.reduce((total, symbol) => {
+  return stack.reduceRight((total, symbol) => {
     return total * 5 + openSymbols.indexOf(symbol) + 1;
   }, 0);
 }
