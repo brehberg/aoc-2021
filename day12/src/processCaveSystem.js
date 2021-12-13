@@ -1,31 +1,32 @@
-function processCaveSystem(graphEdges, allowSmall = false) {
-  const [graphStart, graphEnd] = ["start", "end"];
-  const fullGraph = [];
+function processCaveSystem(graphEdges, allowSmallVisit = false) {
+  const graph = { start: "start", end: "end", edges: [], paths: [] };
+  // add backtrack edges (without return to start or leave from end)
   for (const [startNode, endNode] of graphEdges) {
-    if (startNode !== graphEnd && endNode !== graphStart) {
-      fullGraph.push({ start: startNode, end: endNode });
+    if (startNode !== graph.end && endNode !== graph.start) {
+      graph.edges.push({ start: startNode, end: endNode });
     }
-    if (startNode !== graphStart && endNode !== graphEnd) {
-      fullGraph.push({ start: endNode, end: startNode });
+    if (startNode !== graph.start && endNode !== graph.end) {
+      graph.edges.push({ start: endNode, end: startNode });
     }
   }
+  findPathsToEnd([graph.start], allowSmallVisit);
+  return graph.paths.length;
 
-  const finishedPaths = [];
-  findPathsToEnd([graphStart], graphStart, allowSmall);
-  return finishedPaths.length;
-
-  function findPathsToEnd(potentialPath, lastNode, allowSmall) {
+  function findPathsToEnd(potentialPath, firstVisitAllowed) {
+    const lastNode = potentialPath[potentialPath.length - 1];
     const visited = potentialPath.filter((str) => str !== str.toUpperCase());
-    const firstVisit = allowSmall && new Set(visited).size === visited.length;
-
-    for (const edge of fullGraph) {
-      if (edge.start === lastNode) {
-        if (!firstVisit && visited.includes(edge.end)) continue;
-        let newPath = [...potentialPath, edge.end];
-        edge.end === graphEnd
-          ? finishedPaths.push(newPath)
-          : findPathsToEnd(newPath, edge.end, allowSmall);
+    // recursive depth first search along valid edges until end is found
+    for (const edge of graph.edges) {
+      if (edge.start !== lastNode) continue;
+      let firstVisitAvailable = firstVisitAllowed;
+      if (visited.includes(edge.end)) {
+        if (!firstVisitAvailable) continue;
+        else firstVisitAvailable = false;
       }
+      const newPath = [...potentialPath, edge.end];
+      edge.end === graph.end
+        ? graph.paths.push(newPath)
+        : findPathsToEnd(newPath, firstVisitAvailable);
     }
   }
 }
