@@ -1,3 +1,5 @@
+const TinyQueue = require("tinyqueue");
+
 function processRiskLevel(riskLevels, multiplier = 1) {
   const fullMap = expandFullMap(riskLevels, multiplier);
   const maxRow = fullMap.length - 1;
@@ -14,10 +16,12 @@ function processRiskLevel(riskLevels, multiplier = 1) {
     { row: 1, col: 0 },
     { row: 0, col: 1 },
   ];
-  const queue = [{ row: 0, col: 0, value: 0 }];
+  const queue = new TinyQueue(
+    [{ row: 0, col: 0, value: 0 }],
+    (a, b) => a.value - b.value
+  );
   while (queue.length) {
-    queue.sort((a, b) => a.value - b.value);
-    const node = queue.shift();
+    const node = queue.pop();
     for (const dir of neighborDirections) {
       const next = { row: node.row + dir.row, col: node.col + dir.col };
       if (next.row < 0 || next.row > maxRow) continue;

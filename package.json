@@ -21,5 +21,8 @@
   "homepage": "https://github.com/brehberg/aoc-2021#readme",
   "devDependencies": {
     "jest": "^27.4.3"
+  },
+  "dependencies": {
+    "tinyqueue": "^2.0.3"
   }
 }
