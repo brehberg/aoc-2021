@@ -8,20 +8,24 @@ function processRiskLevel(riskLevels, multiplier = 1) {
     .map((_) => Array(maxCol + 1).fill(Infinity));
   costs[0][0] = 0;
 
-  let costChanged = true;
-  while (costChanged) {
-    costChanged = false;
-    for (let row = 0; row <= maxRow; row++) {
-      for (let col = 0; col <= maxCol; col++) {
-        const above = row === 0 ? Infinity : costs[row - 1][col];
-        const left = col === 0 ? Infinity : costs[row][col - 1];
-        const below = row === maxRow ? Infinity : costs[row + 1][col];
-        const right = col === maxCol ? Infinity : costs[row][col + 1];
-        const newCost = fullMap[row][col] + Math.min(above, left, below, right);
-        if (costs[row][col] > newCost) {
-          costs[row][col] = newCost;
-          costChanged = true;
-        }
+  const neighborDirections = [
+    { row: -1, col: 0 },
+    { row: 0, col: -1 },
+    { row: 1, col: 0 },
+    { row: 0, col: 1 },
+  ];
+  const queue = [{ row: 0, col: 0, value: 0 }];
+  while (queue.length) {
+    queue.sort((a, b) => a.value - b.value);
+    const node = queue.shift();
+    for (const dir of neighborDirections) {
+      const next = { row: node.row + dir.row, col: node.col + dir.col };
+      if (next.row < 0 || next.row > maxRow) continue;
+      if (next.col < 0 || next.col > maxCol) continue;
+      const newCost = costs[node.row][node.col] + fullMap[next.row][next.col];
+      if (newCost < costs[next.row][next.col]) {
+        costs[next.row][next.col] = newCost;
+        queue.push({ row: next.row, col: next.col, value: newCost });
       }
     }
   }
