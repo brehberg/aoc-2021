@@ -9,6 +9,6 @@ exports.doLaunchProbePart1 = doPart1;
 
 async function doPart2(fileName) {
   const data = await readTargetArea(fileName);
-  return processTargetArea(data).count;
+  return processTargetArea(data, true).count;
 }
 exports.doLaunchProbePart2 = doPart2;

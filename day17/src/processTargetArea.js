@@ -1,43 +1,28 @@
-function processTargetArea(targetArea) {
-  const result = { x: 0, y: 0, height: -1, count: 0 };
+function processTargetArea(targetArea, findCount = false) {
+  const result = { x: 0, y: 0, height: -Infinity, count: 0 };
 
-  let xStart = 0;
-  for (let i = 0; i <= targetArea.xMin; i++) {
-    let xDist = findDistance(i);
-    if (xDist >= targetArea.xMin) {
-      xStart = i;
-      break;
-    }
-  }
+  // appoximation for finding inverse of triange number
+  let xStart = Math.floor(Math.sqrt(2 * targetArea.xMin));
 
   for (let x = xStart; x <= targetArea.xMax; x++) {
-    for (let y = targetArea.yMin; y < 0 - targetArea.yMin; y++) {
+    for (let y = targetArea.yMin; y < 1 - targetArea.yMin; y++) {
       let h = fireShot(x, y, targetArea);
-      if (h !== -1) result.count++;
+      if (h !== -Infinity) result.count++;
       if (h > result.height) {
         result.height = h;
         result.x = x;
         result.y = y;
       }
     }
+    if (!findCount) break;
   }
-
   return result;
 }
 exports.processTargetArea = processTargetArea;
 
-const findDistance = (xVelocity) => {
-  let xPosition = 0;
-  while (xVelocity > 0) {
-    xPosition += xVelocity;
-    xVelocity -= 1;
-  }
-  return xPosition;
-};
-
 const fireShot = (xVelocity, yVelocity, target) => {
   const probe = { x: 0, y: 0 };
-  let maxHeight = 0;
+  let maxHeight = -Infinity;
 
   while (probe.x < target.xMax && probe.y > target.yMin) {
     probe.x += xVelocity;
@@ -55,9 +40,6 @@ const fireShot = (xVelocity, yVelocity, target) => {
     ) {
       return maxHeight; // probe hit target
     }
-    if (xVelocity === 0 && probe.x < target.xMin) {
-      return -1; // probe stopped moving forward
-    }
   }
-  return -1; // probe overshot target
+  return -Infinity; // probe overshot target
 };
