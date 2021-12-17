@@ -1,20 +1,19 @@
 function processTargetArea(targetArea, findCount = false) {
   const result = { x: 0, y: 0, height: -Infinity, count: 0 };
-
-  // appoximation for finding inverse of triange number
-  let xStart = Math.floor(Math.sqrt(2 * targetArea.xMin));
+  // approximation for finding inverse of triangle number
+  const xStart = Math.floor(Math.sqrt(2 * targetArea.xMin));
 
   for (let x = xStart; x <= targetArea.xMax; x++) {
-    for (let y = targetArea.yMin; y < 1 - targetArea.yMin; y++) {
+    for (let y = -targetArea.yMin; y >= targetArea.yMin; y--) {
       let h = fireShot(x, y, targetArea);
       if (h !== -Infinity) result.count++;
       if (h > result.height) {
         result.height = h;
         result.x = x;
         result.y = y;
+        if (!findCount) return result;
       }
     }
-    if (!findCount) break;
   }
   return result;
 }
