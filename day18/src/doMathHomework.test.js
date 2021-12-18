@@ -1,11 +1,11 @@
 const { doMathHomeworkPart1 } = require("./doMathHomework.js");
 const { doMathHomeworkPart2 } = require("./doMathHomework.js");
-const { NumPair } = require("./processSnailNumbers.js");
+const { NumberPair } = require("./processSnailNumbers.js");
 const { readSnailNumbers } = require("./readSnailNumbers.js");
 
 describe("Sailfish NumPair Class", () => {
   const doPrintMethod = (input) => {
-    const test = new NumPair(JSON.parse(input));
+    const test = new NumberPair(JSON.parse(input));
     return test.print();
   };
 
@@ -31,9 +31,9 @@ describe("Sailfish NumPair Class", () => {
   });
 
   const doAddMethod = (inputList) => {
-    const test = new NumPair(JSON.parse(inputList.shift()));
+    const test = new NumberPair(JSON.parse(inputList.shift()));
     inputList.forEach((number) => {
-      const additional = new NumPair(JSON.parse(number));
+      const additional = new NumberPair(JSON.parse(number));
       test.add(additional);
     });
     return test.print();
@@ -71,9 +71,9 @@ describe("Sailfish NumPair Class", () => {
 
   test("Add value list", async () => {
     const testData = await readSnailNumbers(`${__dirname}/../data/test.txt`);
-    const total = new NumPair(testData.shift());
+    const total = new NumberPair(testData.shift());
     testData.forEach((number) => {
-      total.add(new NumPair(number));
+      total.add(new NumberPair(number));
     });
     const result = total.print();
     const expectedResult =
@@ -82,7 +82,7 @@ describe("Sailfish NumPair Class", () => {
   });
 
   const doReduceMethod = (input) => {
-    const test = new NumPair(JSON.parse(input));
+    const test = new NumberPair(JSON.parse(input));
     const changed = test.reduceExplode();
     if (!changed) test.reduceSplit();
     return test.print();
@@ -149,7 +149,7 @@ describe("Sailfish NumPair Class", () => {
   });
 
   const doAMagnitudeMethod = (input) => {
-    const test = new NumPair(JSON.parse(input));
+    const test = new NumberPair(JSON.parse(input));
     return test.magnitude();
   };
 
