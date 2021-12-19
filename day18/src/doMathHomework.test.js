@@ -6,7 +6,7 @@ const { readSnailNumbers } = require("./readSnailNumbers.js");
 describe("Sailfish NumPair Class", () => {
   const doPrintMethod = (input) => {
     const test = new NumberPair(JSON.parse(input));
-    return test.print();
+    return test.toString();
   };
 
   test("Print value 1", async () => {
@@ -36,7 +36,7 @@ describe("Sailfish NumPair Class", () => {
       const additional = new NumberPair(JSON.parse(number));
       test.add(additional);
     });
-    return test.print();
+    return test.toString();
   };
 
   test("Add values 1", async () => {
@@ -75,7 +75,7 @@ describe("Sailfish NumPair Class", () => {
     testData.forEach((number) => {
       total.add(new NumberPair(number));
     });
-    const result = total.print();
+    const result = total.toString();
     const expectedResult =
       "[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]";
     expect(result).toEqual(expectedResult);
@@ -85,7 +85,7 @@ describe("Sailfish NumPair Class", () => {
     const test = new NumberPair(JSON.parse(input));
     const changed = test.reduceExplode();
     if (!changed) test.reduceSplit();
-    return test.print();
+    return test.toString();
   };
 
   test("Explode value 1", async () => {

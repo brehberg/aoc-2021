@@ -26,72 +26,63 @@ class NumberPair {
   left = 0;
   right = 0;
   constructor(input) {
-    this.left =
-      input[0] instanceof Array
-        ? new NumberPair(input[0])
-        : new RawNumber(input[0]);
-    this.right =
-      input[1] instanceof Array
-        ? new NumberPair(input[1])
-        : new RawNumber(input[1]);
+    if (input.length !== 2) return;
+    const handleInput = (value) => {
+      return Array.isArray(value)
+        ? new NumberPair(value)
+        : Number.isInteger(value)
+        ? new RawNumber(value)
+        : value;
+    };
+    this.left = handleInput(input[0]);
+    this.right = handleInput(input[1]);
   }
-  print() {
-    return "[" + this.left.print() + "," + this.right.print() + "]";
+  toString() {
+    return "[" + this.left.toString() + "," + this.right.toString() + "]";
   }
   magnitude() {
     return 3 * this.left.magnitude() + 2 * this.right.magnitude();
   }
   add(additionalPair) {
-    this.left = new NumberPair(JSON.parse(this.print()));
+    this.left = new NumberPair([this.left, this.right]);
     this.right = additionalPair;
-    let reduced = false;
-    while (!reduced) {
-      let changed = this.reduceExplode();
-      if (changed) continue;
-      changed = this.reduceSplit();
-      if (changed) continue;
-      reduced = true;
+    while (true) {
+      if (this.reduceExplode()) continue;
+      if (this.reduceSplit()) continue;
+      break;
     }
   }
   reduceSplit() {
     // split left side if 10 or greater
     const splitLeft = this.left.reduceSplit();
-    if (splitLeft) {
-      if (splitLeft instanceof NumberPair) this.left = splitLeft;
-      return true;
-    }
+    if (splitLeft instanceof NumberPair) this.left = splitLeft;
+    if (splitLeft) return true;
     // split right side if 10 or greater
     const splitRight = this.right.reduceSplit();
-    if (splitRight) {
-      if (splitRight instanceof NumberPair) this.right = splitRight;
-      return true;
-    }
+    if (splitRight instanceof NumberPair) this.right = splitRight;
+    if (splitRight) return true;
     return false;
   }
   reduceExplode(depth = 1) {
     // explode left side if nested in four pairs
     if (this.left instanceof NumberPair) {
       if (depth === 4) {
-        const pair = this.left;
+        const nested = this.left;
         this.left = new RawNumber(0);
-        return this.explodeLeft(pair);
+        return this.explodeLeft(nested);
       }
       const exploded = this.left.reduceExplode(depth + 1);
-      if (exploded) {
-        return this.explodeLeft(exploded);
-      }
+      if (exploded) return this.explodeLeft(exploded);
     }
     // explode right side if nested in four pairs
     if (this.right instanceof NumberPair) {
       if (depth === 4) {
-        const pair = this.right;
+        const nested = this.right;
         this.right = new RawNumber(0);
-        return this.explodeRight(pair);
+        return this.explodeRight(nested);
       }
       const exploded = this.right.reduceExplode(depth + 1);
-      if (exploded) {
-        return this.explodeRight(exploded);
-      }
+      if (exploded) return this.explodeRight(exploded);
     }
   }
   explodeLeft(pair) {
@@ -118,17 +109,16 @@ class RawNumber {
   constructor(input) {
     this.value = input;
   }
-  print() {
+  toString() {
     return this.value;
   }
   magnitude() {
     return this.value;
   }
   reduceSplit() {
-    if (this.value >= 10) {
-      const half = this.value / 2;
-      return new NumberPair([Math.floor(half), Math.ceil(half)]);
-    }
+    if (this.value < 10) return false;
+    const half = this.value / 2;
+    return new NumberPair([Math.floor(half), Math.ceil(half)]);
   }
   pushLeft(number) {
     this.value += number;
