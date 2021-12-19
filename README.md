@@ -22,6 +22,7 @@
 - Day 16: Packet Decoder
 - Day 17: Trick Shot
 - Day 18: Snailfish
+- Day 19: Beacon Scanner
 
 ### Repository Structure
 
