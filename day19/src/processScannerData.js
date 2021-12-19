@@ -1,5 +1,4 @@
 function processScannerData(scannerData, findMaxManhattanDist = false) {
-
   // for each scanner calculate the distances between all beacons
   const scannerPositions = [];
   for (const scanner of scannerData) {
@@ -8,7 +7,6 @@ function processScannerData(scannerData, findMaxManhattanDist = false) {
       beacon["distances"] = distanceToOtherBeacons(scanner, beacon);
     }
   }
-
   // look for two scanners with 12 matching beacon distances
   const scannerMatches = [];
   for (const firstScanner of scannerData) {
@@ -23,33 +21,32 @@ function processScannerData(scannerData, findMaxManhattanDist = false) {
         });
     }
   }
-
   // set rotation of initial scanner to first orientation
   scannerPositions[0]["rotate"] = orientations[0];
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (const match of scannerMatches) {
+  const scannersToCheck = [scannerPositions[0].id];
+  while (scannersToCheck.length) {
+    // evaluate scanner pairs with known first to find position of second
+    const toCheck = scannersToCheck.shift();
+    for (const match of scannerMatches.filter((row) => row.first === toCheck)) {
+      // first position record and index of second position record (for updating)
       const firstPosition = scannerPositions.find((p) => p.id === match.first);
       const second = scannerPositions.findIndex((p) => p.id === match.second);
       if (!firstPosition.rotate || scannerPositions[second].rotate) continue;
-      // determine rotation and position offset for second scanner
+      // determine position offset and rotation for second scanner
       for (const rotation of orientations) {
-        const offset = compareBeacons(match, firstPosition, rotation);
-        if (offset) {
-          scannerPositions[second].x = firstPosition.x + offset.x;
-          scannerPositions[second].y = firstPosition.y + offset.y;
-          scannerPositions[second].z = firstPosition.z + offset.z;
-          scannerPositions[second]["rotate"] = rotation;
-          changed = true;
-          break;
-        }
+        const offset = compareBeacons(match, firstPosition.rotate, rotation);
+        if (!offset) continue;
+        scannerPositions[second].x = firstPosition.x + offset.x;
+        scannerPositions[second].y = firstPosition.y + offset.y;
+        scannerPositions[second].z = firstPosition.z + offset.z;
+        scannerPositions[second]["rotate"] = rotation;
+        scannersToCheck.push(scannerPositions[second].id);
+        break;
       }
     }
   }
-
+  // Part 2 largest Manhattan distance between any two scanners
   if (findMaxManhattanDist) {
-    // Part 2 largest Manhattan distance between any two scanners
     let manhattanMax = 0;
     for (const firstPosition of scannerPositions) {
       for (const secondPosition of scannerPositions) {
@@ -62,46 +59,38 @@ function processScannerData(scannerData, findMaxManhattanDist = false) {
     }
     return manhattanMax;
   }
-
   // Part 1 total number of unique beacons in the full map
   let uniqueBeacons = new Set();
   for (const scanner of scannerData) {
     for (const beacon of scanner.beacons) {
-      const scannerPos = scannerPositions.find(
-        (row) => row.id === scanner.number
-      );
-      const rotatedBeacon = rotateBeacon(scannerPos.rotate, beacon);
-      rotatedBeacon.x += scannerPos.x;
-      rotatedBeacon.y += scannerPos.y;
-      rotatedBeacon.z += scannerPos.z;
-      uniqueBeacons.add(
-        `${rotatedBeacon.x},${rotatedBeacon.y},${rotatedBeacon.z}`
-      );
+      const position = scannerPositions.find((p) => p.id === scanner.number);
+      const rotated = rotateBeacon(position.rotate, beacon);
+      rotated.x += position.x;
+      rotated.y += position.y;
+      rotated.z += position.z;
+      uniqueBeacons.add(`${rotated.x},${rotated.y},${rotated.z}`);
     }
   }
   return uniqueBeacons.size;
 }
 exports.processScannerData = processScannerData;
 
-function compareBeacons(scannerMatch, firstPos, rotation) {
+function compareBeacons(scannerMatch, firstRotation, secondRotation) {
   // orientation is correct if all beacon pairs have same offset
   let beaconOffset = undefined;
   for (const [firstBeacon, secondBeacon] of scannerMatch.beacons) {
-    const firstRotated = rotateBeacon(firstPos.rotate, firstBeacon);
-    const secondRotated = rotateBeacon(rotation, secondBeacon);
-    firstRotated.x -= secondRotated.x;
-    firstRotated.y -= secondRotated.y;
-    firstRotated.z -= secondRotated.z;
+    const first = rotateBeacon(firstRotation, firstBeacon);
+    const second = rotateBeacon(secondRotation, secondBeacon);
     if (!beaconOffset) {
       beaconOffset = {
-        x: firstRotated.x,
-        y: firstRotated.y,
-        z: firstRotated.z,
+        x: first.x - second.x,
+        y: first.y - second.y,
+        z: first.z - second.z,
       };
     } else if (
-      beaconOffset.x !== firstRotated.x ||
-      beaconOffset.y !== firstRotated.y ||
-      beaconOffset.z !== firstRotated.z
+      beaconOffset.x !== first.x - second.x ||
+      beaconOffset.y !== first.y - second.y ||
+      beaconOffset.z !== first.z - second.z
     ) {
       beaconOffset = undefined;
       break;
