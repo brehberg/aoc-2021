@@ -60,7 +60,7 @@ function processScannerData(scannerData, findMaxManhattanDist = false) {
     return manhattanMax;
   }
   // Part 1 total number of unique beacons in the full map
-  let uniqueBeacons = new Set();
+  const uniqueBeacons = new Set();
   for (const scanner of scannerData) {
     for (const beacon of scanner.beacons) {
       const position = scannerPositions.find((p) => p.id === scanner.number);
@@ -101,13 +101,15 @@ function compareBeacons(scannerMatch, firstRotation, secondRotation) {
 
 function rotateBeacon(scannerRotation, beacon) {
   const rotatedBeacon = { x: 0, y: 0, z: 0 };
-  for (const [index, axis] of scannerRotation.entries()) {
-    // first char of axis is "+/-" direction, second char is "x/y/z"
-    const newValue = axis[0] === "+" ? beacon[axis[1]] : 0 - beacon[axis[1]];
-    // first index is facing, second is up, third is out
-    if (index === 0) rotatedBeacon.x = newValue;
-    else if (index === 1) rotatedBeacon.y = newValue;
-    else if (index === 2) rotatedBeacon.z = newValue;
+  for (const direction in scannerRotation) {
+    // first char of direction is "+/-" sign, second is "x/y/z" axis
+    const sign = scannerRotation[direction][0];
+    const axis = scannerRotation[direction][1];
+    const newValue = sign === "+" ? beacon[axis] : 0 - beacon[axis];
+    // +x is default facing direction, +y is up, and +z is out
+    if (direction === "face") rotatedBeacon.x = newValue;
+    else if (direction === "up") rotatedBeacon.y = newValue;
+    else if (direction === "out") rotatedBeacon.z = newValue;
   }
   return rotatedBeacon;
 }
@@ -143,33 +145,34 @@ function distanceToOtherBeacons(scanner, beacon) {
 }
 
 const orientations = [
-  ["+x", "+y", "+z"], // facing +x, up +y, out +z
-  ["+x", "-y", "-z"], // facing +x, up -y, out -z
-  ["+x", "+z", "-y"], // facing +x, up +z, out -y
-  ["+x", "-z", "+y"], // facing +x, up -z, out +y
-
-  ["-x", "+y", "-z"], // facing -x, up +y, out -z
-  ["-x", "-y", "+z"], // facing -x, up -y, out +z
-  ["-x", "+z", "+y"], // facing -x, up +z, out +y
-  ["-x", "-z", "-y"], // facing -x, up -z, out -y
-
-  ["+y", "+x", "-z"], // facing +y, up +x, out -z
-  ["+y", "-x", "+z"], // facing +y, up -x, out +z
-  ["+y", "+z", "+x"], // facing +y, up +z, out +x
-  ["+y", "-z", "-x"], // facing +y, up -z, out -x
-
-  ["-y", "+x", "+z"], // facing -y, up +x, out +z
-  ["-y", "-x", "-z"], // facing -y, up -x, out -z
-  ["-y", "+z", "-x"], // facing -y, up +z, out -x
-  ["-y", "-z", "+x"], // facing -y, up -z, out +x
-
-  ["+z", "+x", "+y"], // facing +z, up +x, out +y
-  ["+z", "-x", "-y"], // facing +z, up -x, out -y
-  ["+z", "+y", "-x"], // facing +z, up +y, out -x
-  ["+z", "-y", "+x"], // facing +z, up -y, out +x
-
-  ["-z", "+x", "-y"], // facing -z, up +x, out -y
-  ["-z", "-x", "+y"], // facing -z, up -x, out +y
-  ["-z", "+y", "+x"], // facing -z, up +y, out +x
-  ["-z", "-y", "-x"], // facing -z, up -y, out -x
+  // facing positive x (rightward)
+  { face: "+x", up: "+y", out: "+z" },
+  { face: "+x", up: "-y", out: "-z" },
+  { face: "+x", up: "+z", out: "-y" },
+  { face: "+x", up: "-z", out: "+y" },
+  // facing negative x (leftward)
+  { face: "-x", up: "+y", out: "-z" },
+  { face: "-x", up: "-y", out: "+z" },
+  { face: "-x", up: "+z", out: "+y" },
+  { face: "-x", up: "-z", out: "-y" },
+  // facing positive y (upward)
+  { face: "+y", up: "+x", out: "-z" },
+  { face: "+y", up: "-x", out: "+z" },
+  { face: "+y", up: "+z", out: "+x" },
+  { face: "+y", up: "-z", out: "-x" },
+  // facing negative y (downward)
+  { face: "-y", up: "+x", out: "+z" },
+  { face: "-y", up: "-x", out: "-z" },
+  { face: "-y", up: "+z", out: "-x" },
+  { face: "-y", up: "-z", out: "+x" },
+  // facing positive z (outward)
+  { face: "+z", up: "+x", out: "+y" },
+  { face: "+z", up: "-x", out: "-y" },
+  { face: "+z", up: "+y", out: "-x" },
+  { face: "+z", up: "-y", out: "+x" },
+  // facing negative z (inward)
+  { face: "-z", up: "+x", out: "-y" },
+  { face: "-z", up: "-x", out: "+y" },
+  { face: "-z", up: "+y", out: "+x" },
+  { face: "-z", up: "-y", out: "-x" },
 ];

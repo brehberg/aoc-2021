@@ -14,7 +14,7 @@ async function readScannerData(fileName) {
       currentScanner && someScannerData.push(currentScanner);
       currentScanner = undefined;
     } else if (line.includes("scanner")) {
-      // header line makrs starts of a new scanner report
+      // header line marks start of a new scanner report
       const regexMatch = line.match(/\d+/);
       currentScanner = { number: Number(regexMatch[0]), beacons: [] };
     } else {
