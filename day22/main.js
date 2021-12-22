@@ -2,7 +2,7 @@ const { doCubeControlPart1 } = require("./src/doCubeControl.js");
 const { doCubeControlPart2 } = require("./src/doCubeControl.js");
 
 // https://adventofcode.com/2021/day/22
-console.log("--- Day 22: Reactor Reboot ---"); 
+console.log("--- Day 22: Reactor Reboot ---");
 const smallFile = `${__dirname}/data/basic.txt`;
 const testFile = `${__dirname}/data/example.txt`;
 const test2File = `${__dirname}/data/example2.txt`;

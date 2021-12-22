@@ -1,17 +1,17 @@
 function processRebootSteps(rebootSteps, initOnly = true) {
-  // if (initOnly) return firstAttempt(rebootSteps, initOnly);
   let activeRegions = [];
   for (const command of rebootSteps) {
     if (initOnly && noOverlap(command, initRegion)) continue;
-
-    const newRegions = [];
+    // add the new region only for activate (on) commands
+    const newRegions =
+      command.action === "on" ? [createNewRegion(command)] : [];
     for (const region of activeRegions) {
       // keep existing region intact when no overlap with new region
       if (noOverlap(command, region)) {
         newRegions.push(region);
         continue;
       }
-      // keep smaller regions that exclude new region (order matters)
+      // keep smaller regions that exclude new region (avoid overlap)
       if (command.x.max < region.x.max)
         newRegions.push(keepRegionToRight(command, region));
       if (command.x.min > region.x.min)
@@ -25,13 +25,6 @@ function processRebootSteps(rebootSteps, initOnly = true) {
       if (command.z.min > region.z.min)
         newRegions.push(keepRegionInFront(command, region));
     }
-    // add the new region only for activate (on) commands
-    if (command.action === "on")
-      newRegions.push({
-        x: { min: command.x.min, max: command.x.max },
-        y: { min: command.y.min, max: command.y.max },
-        z: { min: command.z.min, max: command.z.max },
-      });
     activeRegions = newRegions;
   }
   return activeRegions.reduce((count, r) => count + volume(r), 0);
@@ -48,6 +41,13 @@ const noOverlap = (newRegion, testRegion) => {
     newRegion.z.max < testRegion.z.min
   );
 };
+const createNewRegion = (command) => {
+  return {
+    x: { min: command.x.min, max: command.x.max },
+    y: { min: command.y.min, max: command.y.max },
+    z: { min: command.z.min, max: command.z.max },
+  };
+};
 const keepRegionToRight = (newRegion, existing) => {
   return {
     x: { min: newRegion.x.max + 1, max: existing.x.max },
@@ -63,7 +63,7 @@ const keepRegionToLeft = (newRegion, existing) => {
   };
 };
 const keepRegionAbove = (newRegion, existing) => {
-  // Left and Right regions on X axis aready checked
+  // Left and Right regions on X axis aready covered
   return {
     x: {
       min: Math.max(existing.x.min, newRegion.x.min),
@@ -74,7 +74,7 @@ const keepRegionAbove = (newRegion, existing) => {
   };
 };
 const keepRegionBelow = (newRegion, existing) => {
-  // Left and Right regions on X axis aready checked
+  // Left and Right regions on X axis aready covered
   return {
     x: {
       min: Math.max(existing.x.min, newRegion.x.min),
@@ -85,8 +85,8 @@ const keepRegionBelow = (newRegion, existing) => {
   };
 };
 const keepRegionBehind = (newRegion, existing) => {
-  // Left and Right regions on X axis aready checked
-  // Below and Above regions on Y axis already checked
+  // Left and Right regions on X axis aready covered
+  // Below and Above regions on Y axis already covered
   return {
     x: {
       min: Math.max(existing.x.min, newRegion.x.min),
@@ -100,8 +100,8 @@ const keepRegionBehind = (newRegion, existing) => {
   };
 };
 const keepRegionInFront = (newRegion, existing) => {
-  // Left and Right regions on X axis aready checked
-  // Below and Above regions on Y axis already checked
+  // Left and Right regions on X axis aready covered
+  // Below and Above regions on Y axis already covered
   return {
     x: {
       min: Math.max(existing.x.min, newRegion.x.min),
@@ -125,29 +125,4 @@ const initRegion = {
   x: { min: -50, max: 50 },
   y: { min: -50, max: 50 },
   z: { min: -50, max: 50 },
-};
-const firstAttempt = (rebootSteps, initOnly) => {
-  // naive, slow approach used for part 1, replaced for part 2
-  const activeCubes = new Set();
-  for (const command of rebootSteps) {
-    for (let x = command.x.min; x <= command.x.max; x++) {
-      if (initOnly && (x < -50 || x > 50)) continue;
-
-      for (let y = command.y.min; y <= command.y.max; y++) {
-        if (initOnly && (y < -50 || y > 50)) continue;
-
-        for (let z = command.z.min; z <= command.z.max; z++) {
-          if (initOnly && (z < -50 || z > 50)) continue;
-
-          const cubeCode = `${x},${y},${z}`;
-          if (command.action === "on" && !activeCubes.has(cubeCode)) {
-            activeCubes.add(cubeCode);
-          } else if (command.action === "off" && activeCubes.has(cubeCode)) {
-            activeCubes.delete(cubeCode);
-          }
-        }
-      }
-    }
-  }
-  return activeCubes.size;
 };
