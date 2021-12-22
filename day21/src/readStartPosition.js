@@ -8,7 +8,12 @@ async function readStartPosition(fileName) {
   });
   const someStartPosition = [];
   for await (const line of file) {
-    someStartPosition.push(Number(line.trim().slice(-1)));
+    const regexMatch = line.match(/(.+) starting position: (\d+)/);
+    regexMatch &&
+      someStartPosition.push({
+        name: regexMatch[1],
+        position: Number(regexMatch[2]),
+      });
   }
   return someStartPosition;
 }
