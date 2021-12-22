@@ -74,8 +74,8 @@ class RealGame {
     const loser = this.startingGame.players[1];
     return (
       `\nAfter ${totalGames} universes have been created:` +
-      `\n${winner.name} wins more in ${winner.score}% of the games.` +
-      `\n${loser.name} lost more in ${loser.score}% of the games.`
+      `\n  ${winner.name} wins more with ${winner.score}% of victories.` +
+      `\n  ${loser.name} wins less with ${loser.score}% of victories.`
     );
   }
 }
@@ -123,8 +123,8 @@ class PracticeGame {
     const loser = this.players[this.players.length - 1];
     return (
       `\nAfter ${this.die.totalRolls} total rolls of the deterministic die:` +
-      `\n${winner.name} wins the game with ${winner.score} points.` +
-      `\n${loser.name} lost the game with ${loser.score} points.`
+      `\n  ${winner.name} wins the game with ${winner.score} points.` +
+      `\n  ${loser.name} lost the game with ${loser.score} points.`
     );
   }
 }
