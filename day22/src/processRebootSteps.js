@@ -63,9 +63,9 @@ const keepRegionToLeft = (newRegion, existing) => {
   };
 };
 const keepRegionAbove = (newRegion, existing) => {
-  // Left and Right regions on X axis aready covered
   return {
     x: {
+      // Left and Right regions on X axis aready coveredv
       min: Math.max(existing.x.min, newRegion.x.min),
       max: Math.min(existing.x.max, newRegion.x.max),
     },
@@ -74,9 +74,9 @@ const keepRegionAbove = (newRegion, existing) => {
   };
 };
 const keepRegionBelow = (newRegion, existing) => {
-  // Left and Right regions on X axis aready covered
   return {
     x: {
+      // Left and Right regions on X axis aready covered
       min: Math.max(existing.x.min, newRegion.x.min),
       max: Math.min(existing.x.max, newRegion.x.max),
     },
@@ -85,14 +85,14 @@ const keepRegionBelow = (newRegion, existing) => {
   };
 };
 const keepRegionBehind = (newRegion, existing) => {
-  // Left and Right regions on X axis aready covered
-  // Below and Above regions on Y axis already covered
   return {
     x: {
+      // Left and Right regions on X axis aready covered
       min: Math.max(existing.x.min, newRegion.x.min),
       max: Math.min(existing.x.max, newRegion.x.max),
     },
     y: {
+      // Below and Above regions on Y axis already covered
       min: Math.max(existing.y.min, newRegion.y.min),
       max: Math.min(existing.y.max, newRegion.y.max),
     },
@@ -100,14 +100,14 @@ const keepRegionBehind = (newRegion, existing) => {
   };
 };
 const keepRegionInFront = (newRegion, existing) => {
-  // Left and Right regions on X axis aready covered
-  // Below and Above regions on Y axis already covered
   return {
     x: {
+      // Left and Right regions on X axis aready covered
       min: Math.max(existing.x.min, newRegion.x.min),
       max: Math.min(existing.x.max, newRegion.x.max),
     },
     y: {
+      // Below and Above regions on Y axis already covered
       min: Math.max(existing.y.min, newRegion.y.min),
       max: Math.min(existing.y.max, newRegion.y.max),
     },

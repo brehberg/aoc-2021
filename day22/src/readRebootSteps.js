@@ -8,17 +8,17 @@ async function readRebootSteps(fileName) {
   });
   const someRebootSteps = [];
   for await (const line of file) {
-    const regexMatch = line
-      .trim()
-      .match(
-        /(on|off) x=(-?\d+)..(-?\d+),y=(-?\d+)..(-?\d+),z=(-?\d+)..(-?\d+)/
-      );
-    regexMatch &&
+    // expected line format: on x=10..12,y=10..12,z=10..12
+    const splitLine = line.trim().split(/\s+/);
+    const regexMatch = splitLine[1]
+      .match(/x=(-?\d+)..(-?\d+),y=(-?\d+)..(-?\d+),z=(-?\d+)..(-?\d+)/)
+      .map(Number);
+    regexMatch.length === 7 &&
       someRebootSteps.push({
-        action: regexMatch[1].trim(),
-        x: { min: Number(regexMatch[2]), max: Number(regexMatch[3]) },
-        y: { min: Number(regexMatch[4]), max: Number(regexMatch[5]) },
-        z: { min: Number(regexMatch[6]), max: Number(regexMatch[7]) },
+        action: splitLine[0].toLowerCase(),
+        x: { min: regexMatch[1], max: regexMatch[2] },
+        y: { min: regexMatch[3], max: regexMatch[4] },
+        z: { min: regexMatch[5], max: regexMatch[6] },
       });
   }
   return someRebootSteps;
