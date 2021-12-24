@@ -27,6 +27,7 @@
 - Day 21: Dirac Dice
 - Day 22: Reactor Reboot
 - Day 23: Amphipod
+- Day 24: Arithmetic Logic Unit
 
 ### Repository Structure
 
