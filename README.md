@@ -28,6 +28,7 @@
 - Day 22: Reactor Reboot
 - Day 23: Amphipod
 - Day 24: Arithmetic Logic Unit
+- Day 25: Sea Cucumber
 
 ### Repository Structure
 
@@ -60,12 +61,12 @@ Part Two Answer: 1608
 
 ```text
 > npm test
- PASS  day01/src/doSonarSweep.test.js
- PASS  day02/src/doDive.test.js
+ PASS  day23/src/doOrganizeAmphipods.test.js (7.434 s)
+ PASS  day24/src/doRunCode.test.js (121.514 s)
 
-Test Suites: 2 passed, 2 total
-Tests:       8 passed, 8 total
+Test Suites: 26 passed, 26 total
+Tests:       153 passed, 153 total
 Snapshots:   0 total
-Time:        0.244 s, estimated 1 s
+Time:        121.786 s, estimated 128 s
 Ran all test suites.
 ```
